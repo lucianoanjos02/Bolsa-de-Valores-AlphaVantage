@@ -1,0 +1,18 @@
+.chartjs-size-monitor {
+    position: absolute; 
+    inset: 0px; 
+    overflow: hidden; 
+    pointer-events: none; 
+    visibility: hidden; 
+    z-index: -1;
+}
+
+.chart {
+    width: 80%;
+    height: 25%;
+    display: block;
+}
+
+.table-block, .table-responsive {
+    margin-top: 2%;
+}
