@@ -13,6 +13,10 @@
     display: block;
 }
 
-.table-block, .table-responsive {
+.table-block, .table-responsive{
     margin-top: 2%;
+}
+
+.chart-block {
+    margin-top: 4%;
 }

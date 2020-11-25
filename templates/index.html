@@ -39,20 +39,28 @@
                                     <th>#</th>
                                     <th>Empresa</th>
                                     <th>Símbolo</th>
-                                    <th>Atual</th>
+                                    <th>Preço Atual</th>
                                     <th>Derivada</th>
+                                    <th>Variação(%)</th>
+                                    <th>Última Atualização</th>
                                     <th>Visualizar</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Empresa 1</td>
-                                    <td>Símbolo Empresa 1</td>
-                                    <td>100,000.00</td>
-                                    <td>100,000.00</td>
-                                    <td>Icone Visualizar</td>
-                                </tr>
+                                {% set count = namespace(value=0) %}
+                                {% for company in companies %}
+                                    {% set count.value = count.value + 1 %}
+                                        <tr>
+                                            <td>{{ count.value }}</td>
+                                            <td>{{ company.company_name }}</td>
+                                            <td>{{ company.company_symbol }}</td>
+                                            <td>{{ companies_price[count.value - 1].price_close }}</td>
+                                            <td>{{ companies_price[count.value - 1].price_open }}</td>
+                                            <td>{{ companies_price[count.value - 1].price_change_percent }}</td>
+                                            <td>{{ companies_price[count.value - 1].price_date }}</td>
+                                            <td>Ícone Gráfico</td>
+                                        </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -68,7 +76,7 @@
                 datasets: [{
                     label: 'My Chart',
                     borderColor: 'rgb(255,99,132)',
-                    data: [100156.95, 105689.95, 118568.45, 148568.45, 153458.47, 135468.78, 186472.32, 179506.56, 123815.87, 145868.84, 123658.86, 175457.52]
+                    data: [105963.5100, 105689.95, 118568.45, 148568.45, 153458.47, 135468.78, 186472.32, 179506.56, 123815.87, 145868.84, 123658.86, 175457.52]
                 }]
             },
             options: {}
