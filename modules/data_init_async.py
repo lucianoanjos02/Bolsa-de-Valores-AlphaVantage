@@ -6,7 +6,7 @@ from modules.models.price import Price
 from modules.dao.company_dao import CompanyDAO
 from modules.dao.price_dao import PriceDAO
 
-API_KEY = '5365CWXFF00O7QKP'
+API_KEY = '7IEKBZD1IV0BSJQN'
 
 async def get_request_global(company):
     request_global = requests.get(f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={company}&apikey={API_KEY}')
@@ -15,11 +15,12 @@ async def get_request_global(company):
 
 
 async def get_request_daily(company):
-    request_global = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={company}&apikey=5365CWXFF00O7QKP')
+    request_global = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={company}&apikey={API_KEY}')
     request_global_json = request_global.json()
     chart_content_data = []
     chart_content_labels = []
     i = 0
+    print(request_global_json)
     for data in request_global_json['Time Series (Daily)'].values():
         if i < 7:
             chart_content_data.append(data['4. close'])
