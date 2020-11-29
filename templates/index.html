@@ -23,6 +23,29 @@
         </div>
     </header>
     <div class="container chart-block">
+            <h1 class="text-center jumbotron-heading">{{ company_name }} - {{ company_symbol }}</h1>
+        <div class="container">
+            <div class="card-deck mb-3 text-center">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">ABERTURA (DERIVADA)</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title price1 pricing-card-title"></h1>
+                    </div>
+                    
+                </div>
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">FECHAMENTO (ATUAL)</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title price2 pricing-card-title"></h1>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
         <div class="row align-items-start">
             <main role="main chart" class="col-md-12">
                 <canvas id="myChart"></canvas>
@@ -43,7 +66,7 @@
                                     <th>Derivada</th>
                                     <th>Variação(%)</th>
                                     <th>Última Atualização</th>
-                                    <th>Visualizar</th>
+                                    <th>Gráfico</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,11 +77,15 @@
                                             <td>{{ count.value }}</td>
                                             <td>{{ company.company_name }}</td>
                                             <td>{{ company.company_symbol }}</td>
-                                            <td>{{ companies_price[count.value - 1].price_close }}</td>
-                                            <td>{{ companies_price[count.value - 1].price_open }}</td>
-                                            <td>{{ companies_price[count.value - 1].price_change_percent }}</td>
-                                            <td>{{ companies_price[count.value - 1].price_date }}</td>
-                                            <td>Ícone Gráfico</td>
+                                            <td class="price_close{{ count.value }}">{{ companies_price[count.value - 1].price_close }}</td>
+                                            <td class="price_open{{ count.value }}">{{ companies_price[count.value - 1].price_open }}</td>
+                                            <td class="price_change_percent{{ count.value }}">{{ companies_price[count.value - 1].price_change_percent }}</td>
+                                            <td class="price_date{{ count.value }}">{{ companies_price[count.value - 1].price_date }}</td>
+                                            <td>
+                                                <button class="btn btn-outline-success" id="show-company-data{{ count.value }}" type="button">
+                                                    Visualizar
+                                                </button>
+                                            </td>
                                         </tr>
                                 {% endfor %}
                             </tbody>
@@ -69,14 +96,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script>
         var chartInfo = document.getElementById('myChart').getContext('2d');
+        var chartData = {{ chart_data | safe }};
+        var chartCompanySymbol = document.querySelector('.jumbotron-heading').innerHTML;
+        console.log(chartCompanySymbol);
+        document.querySelector('.price1').innerHTML = chartData[1][5];
+        document.querySelector('.price2').innerHTML = chartData[1][6];
         var chart = new Chart(chartInfo, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                labels: chartData[0],
                 datasets: [{
-                    label: 'My Chart',
+                    label: chartCompanySymbol,
                     borderColor: 'rgb(255,99,132)',
-                    data: [105963.5100, 105689.95, 118568.45, 148568.45, 153458.47, 135468.78, 186472.32, 179506.56, 123815.87, 145868.84, 123658.86, 175457.52]
+                    data: chartData[1]
                 }]
             },
             options: {}
@@ -88,5 +120,60 @@
     integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="static/js/bootstrap.min.js" 
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:5000')
+        socket.on('connect', function(){
+            socket.emit('request', {
+                data: 'ready'
+            })
+            socket.emit('request_chart_update',{
+                data: 'ready'
+            })
+        socket.on('response', function(message){
+            var count = 1
+            message.forEach(element => {
+                $('td.price_close' + count.toString()).text(element["Global Quote"]["05. price"]);
+                $('td.price_open' + count.toString()).text(element["Global Quote"]["02. open"]);
+                $('td.price_change_percent' + count.toString()).text(element["Global Quote"]["10. change percent"]);
+                $('td.price_date' + count.toString()).text(element["Global Quote"]["07. latest trading day"]);
+                count += 1
+            });
+            socket.emit('request', {
+                data: 'received'
+            })
+        })
+        socket.on('response_chart_update', function(message){
+            message[0].forEach(element => {
+                if(chart.data.labels.length == 7) {
+                    chart.data.labels.pop();
+                } 
+                chart.data.labels.push(element);      
+            });
+            message[1].forEach(element => {
+                chart.data.datasets.forEach((dataset) => {
+                    if(dataset.data.length == 7) {
+                        dataset.data.pop();
+                    } 
+                    dataset.data.push(element); 
+                });
+            });
+            document.querySelector('.price1').innerHTML = chartData[1][5];
+            document.querySelector('.price2').innerHTML = chartData[1][6];
+            chart.update();
+            socket.emit('request_chart_update', {
+                data: 'received'
+            })
+        })
+
+        })
+        socket.on('disconnect', function(message){
+            console.log(message);
+            socket.emmit('disconnect', {
+                data: 'disconnected'
+            })
+            socket.disconnect()
+        })
+    </script>
 </body>
 </html>
