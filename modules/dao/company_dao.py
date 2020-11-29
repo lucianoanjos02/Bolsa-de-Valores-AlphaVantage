@@ -23,3 +23,19 @@ class CompanyDAO:
     def get_companies_data(self):
         companies = self.__db_conn.query(Company).all()
         return companies
+    
+    def get_company_symbol(self, company_symbol):
+        company = self.__db_conn.query(Company.company_symbol).filter(Company.company_symbol == company_symbol).first()
+        self.__db_conn.expunge_all()
+        self.__db_conn.close()
+        return company
+    
+    def get_company_id(self, company_name):
+        company_id = self.__db_conn.query(Company.company_id).filter(Company.company_name == company_name).first()
+        return company_id
+    
+    def get_company_name(self, company_symbol):
+        company_name = self.__db_conn.query(Company.company_name).filter(Company.company_symbol == company_symbol).first()
+        self.__db_conn.expunge_all()
+        self.__db_conn.close()
+        return company_name
