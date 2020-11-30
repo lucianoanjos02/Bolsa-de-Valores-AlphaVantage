@@ -1,27 +1,75 @@
 import asyncio
 import time
 import requests
-from flask import Flask, render_template, json
+from flask import Flask, render_template, json, request, redirect, url_for, flash
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_socketio import SocketIO
 from modules.db.db import db_session
 from modules.data_init import init_data
 from modules.helpers.get_data import get_chart_data, get_request_daily_full, get_request_daily
 from modules.helpers.update_data import table_data_update_request_handler, chart_data_update_request_handler, show_chart_data_request_handler
 from modules.models.price import Price
+from modules.models.user import User
 from modules.dao.company_dao import CompanyDAO
 from modules.dao.price_dao import PriceDAO
+from modules.dao.user_dao import UserDAO
+
 
 app = Flask(__name__)
 app.config.from_pyfile('modules/config.py')
 
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message = "Por favor, faça o login para acessar o sistema!"
+
 socketio = SocketIO(app, ping_interval=60)
 
+user_dao = UserDAO(db_session)
 company_dao = CompanyDAO(db_session)
 price_dao = PriceDAO(db_session)
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return user_dao.get_user_id(user_id)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = user_dao.get_user_login(request.form['login'])
+        if user != None and user.user_password == request.form['password']:
+            login_user(user)
+            return redirect(url_for('dashboard'))
+        else:
+            flash("Usuário ou senha inválidos")
+            return redirect(url_for('login'))
+    return render_template('login.html')
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        user = User(request.form['first-name'],
+                    request.form['last-name'],
+                    request.form['login'],
+                    request.form['password'],
+                    request.form['email'])
+        user_dao.register_user(user)
+        flash("Usuário cadastrado com sucesso!")
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+
 @app.route('/', methods=['GET', 'POST'])
-def companies():
+@login_required
+def dashboard():
     asyncio.run(init_data())
     companies = company_dao.get_companies_data()
     companies_data = {}

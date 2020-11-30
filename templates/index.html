@@ -12,11 +12,11 @@
     <header>
         <div class="navbar fixed-top navbar-dark bg-dark shadow-sm">
             <div class="container d-flex justify-content-between">
-                <a class="navbar-brand d-flex align-items-center" href="#">Bolsa de Valores</a>
+                <a class="navbar-brand d-flex align-items-center" href="{{ url_for('dashboard') }}">Bolsa de Valores</a>
 
-                <a class="nav-link disabled" href="#">Olá, Luciano</a>
+                <a class="nav-link disabled" href="#">Olá, {{ current_user.user_first_name }}</a>
 
-                <form class="navbar-form navbar-right" method="POST">
+                <form class="navbar-form navbar-right" action="{{ url_for('logout') }}" method="POST">
                     <button type="submit" class="btn btn-success">Sair</button>
                 </form>
             </div>
@@ -99,8 +99,7 @@
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" 
     integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="static/js/bootstrap.min.js" 
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="static/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="static/js/socket.js"></script>
 </body>
