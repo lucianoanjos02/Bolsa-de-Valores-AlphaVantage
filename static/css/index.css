@@ -1,0 +1,11 @@
+body {
+    background-color: #414141;
+}
+
+.card {
+    background-color: #414141;
+}
+
+h1, h2, h3, h4, th, td {
+    color:  #bebebe;
+  }

@@ -5,7 +5,7 @@ var chartInfo = document.getElementById('myChart').getContext('2d');
                 labels: [],
                 datasets: [{
                     label: '',
-                    borderColor: 'rgb(255,99,132)',
+                    borderColor: 'rgb(50,205,50)',
                     data: []
                 }]
             },
