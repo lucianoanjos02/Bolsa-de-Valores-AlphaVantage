@@ -14,29 +14,23 @@ async def get_request_global(company):
     return request_global_json
 
 
-async def get_request_daily(company):
+async def get_request_daily_full(company):
     request_global = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={company}&apikey={API_KEY}')
     request_global_json = request_global.json()
-    chart_content_data = []
-    chart_content_labels = []
+    return request_global_json
+
+
+async def get_request_daily(company, days=7):
+    request_global = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={company}&apikey={API_KEY}')
+    request_global_json = request_global.json()
+    chart_info = []
     i = 0
-    print(request_global_json)
-    for data in request_global_json['Time Series (Daily)'].values():
-        if i < 7:
-            chart_content_data.append(data['4. close'])
+    for data in request_global_json['Time Series (Daily)'].items():
+        if i < days:
+            chart_info.append(data)
             i += 1
         else:
             break
-    i = 0
-    for data in request_global_json['Time Series (Daily)'].keys():
-        if i < 7:
-            chart_content_labels.append(data)
-            i += 1
-        else:
-            break
-    chart_content_data.reverse()
-    chart_content_labels.reverse()
-    chart_info = [chart_content_labels, chart_content_data]
     return chart_info
 
 
@@ -59,26 +53,44 @@ async def init_data():
         price_dao = PriceDAO(db_session)
         company_data = company_dao.get_company_by_name(company)
         if company_data == None:
-            for company_info in dict(await get_request_global(companies[company])).values():
-                print('Registering company')
-                new_company = Company(
+            new_company = Company(
                     company,
-                    company_info['01. symbol']
+                    companies[company]
                     )
-                company_dao.register_company(new_company)
-                company_data_stored = company_dao.get_company_symbol(company_info['01. symbol'])[0]
+            company_dao.register_company(new_company)
+            for company_info in await get_request_daily(companies[company], 30):
+                print(new_company.company_id)
+                print(float(company_info[1]['1. open']))
+                print(float(company_info[1]['2. high']))
+                print(float(company_info[1]['3. low']))
+                print(float(company_info[1]['4. close']))
+                print(company_info[0])
                 new_company_price = Price(
                         new_company.company_id,
-                        float(company_info['02. open']),
-                        float(company_info['03. high']),
-                        float(company_info['04. low']),
-                        float(company_info['05. price']),
-                        float(company_info['08. previous close']),
-                        company_info['09. change'],
-                        company_info['10. change percent'],
-                        company_info['07. latest trading day']
+                        float(company_info[1]['1. open']),
+                        float(company_info[1]['2. high']),
+                        float(company_info[1]['3. low']),
+                        float(company_info[1]['4. close']),
+                        company_info[0]
                     )
                 price_dao.register_company_price(new_company_price)
-                await asyncio.sleep(12)
+            print(f'Registering company {companies[company]}')
+            await asyncio.sleep(12)
         else:
             continue
+
+
+async def get_chart_data(company, days=7):
+    company_dao = CompanyDAO(db_session)
+    price_dao = PriceDAO(db_session)
+    company_id = company_dao.get_company_id(company)
+    company_prices = price_dao.get_company_price_by_days(company_id, days)
+    chart_labels = []
+    chart_data = []
+    for price in company_prices:
+        chart_labels.append(str(price.price_date))
+        chart_data.append(str(price.price_close))
+    chart_labels.reverse()
+    chart_data.reverse()
+    chart_data = [chart_labels, chart_data]
+    return chart_data

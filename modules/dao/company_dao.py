@@ -30,8 +30,8 @@ class CompanyDAO:
         self.__db_conn.close()
         return company
     
-    def get_company_id(self, company_name):
-        company_id = self.__db_conn.query(Company.company_id).filter(Company.company_name == company_name).first()
+    def get_company_id(self, company_symbol):
+        company_id = self.__db_conn.query(Company.company_id).filter(Company.company_symbol == company_symbol).first()
         return company_id
     
     def get_company_name(self, company_symbol):
