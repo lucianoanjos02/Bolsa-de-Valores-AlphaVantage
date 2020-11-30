@@ -74,11 +74,15 @@
 Ao acessar a aplicação pela primeira vez, nos deparamos com a tela de login, onde o usuário poderá acessar a aplicação ao realizar o login ou então fazer um cadastro caso
 ainda não esteja cadastrado, clicando em "Cadastre-se".
 
+<img src="doc/login.jpg">
+
 Note que a aplicação não poderá ser acessada se o usuário não possuir um cadastro e realizar o login na aplicação.
 
 # Cadastro de Usuário
 
 Ao clicar em "Cadastre-se" na tela de login, o usuário é direcionado à pagina de cadastro de usuário, onde podera realizar o cadastro.
+
+<img src="doc/cadastro.jpg">
 
 Após feito o cadastro o usuário é redirecionado de volta à página de login, onde poderá se logar para utilizar a aplicação.
 
@@ -87,9 +91,17 @@ Após feito o cadastro o usuário é redirecionado de volta à página de login,
 Na página principal temos uma barra de navegações onde é apenas exibido o nome da aplicação, uma mensagem de boas-vindas ao usuário logado e o botão de "Sair"
 utilizado para realizar o logout da aplicação.
 
+<img src="doc/menu.jpg">
+
 Abaixo disso temos os dados em gráfico da empresa e as informações dela como símbolo, preço atual e derivada. O gráfico de inicio estará vazio, contudo, abaixo do gráfico
 temos uma tabela com as informações das empresas. Em cada coluna também há um botão "Visualizar" que ao usuário clicar nele as informações da empresa selecionada são plotadas
 no gráfico.
+
+<img src="doc/grafico-vazio.jpg">
+
+<img src="doc/tabela.jpg">
+
+<img src="doc/grafico-dados.jpg">
 
 Tanto as informações contidas no gráfico quanto as informações da tabela das empresas, são atualizadas em tempo real para o usuário, sem necessidade da interferência do usuário
 ou de recarregar a página.
