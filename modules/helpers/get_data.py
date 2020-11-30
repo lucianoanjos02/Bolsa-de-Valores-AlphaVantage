@@ -1,4 +1,5 @@
 import asyncio
+import requests
 from modules.config import API_KEY
 from modules.db.db import db_session
 from modules.models.company import Company
