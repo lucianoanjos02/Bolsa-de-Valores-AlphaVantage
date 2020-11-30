@@ -3,6 +3,16 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, String, Integer
 
 class Company(Base):
+    '''
+        Classe Company
+
+        - Classe mapeadora da tablea TCompany no banco de dados, utilizada
+        para persistir o nome, símbolo das empresas.
+
+        - A tabela faz relação com a tabela TPrice da classe Price, onde são
+        persistidos os dados relacionados ao preço/pontos das empresas na 
+        bolsa.
+    '''
     __tablename__ = 'TCompany'
     company_id = Column(Integer, primary_key=True, autoincrement=True)
     company_name = Column(String(25), nullable=False, unique=True)

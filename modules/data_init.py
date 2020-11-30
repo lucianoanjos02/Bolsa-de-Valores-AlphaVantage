@@ -8,6 +8,18 @@ from modules.dao.company_dao import CompanyDAO
 from modules.dao.price_dao import PriceDAO
 
 async def init_data():
+    '''
+        Função init_data
+
+        - Responsável por inicializar os dados das 10 maiores empresas do Brasil na Bolsa de Valores
+        no banco de dados.
+
+        - A função espera que a função asincrona init_db seja executada para garantir que as tabelas
+        e estrutura da base de dados sejá estabelecida antes de inserir os dados das empresas.
+
+        - Essa função também é utilizada para atualizar novos dados das empresas que constem na API
+        da Alpha Vantage.
+    '''
     await init_db()
     companies = {
         'Petrobras' : 'PETR4.SAO',

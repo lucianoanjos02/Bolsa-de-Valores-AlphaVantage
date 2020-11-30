@@ -1,3 +1,6 @@
+// SCRIPT RESPONSÁVEL POR IMPLEMENTAR A CONEXÃO VIA SOCKET DO CLIENT COM O SERVIDOR
+// E EXECUTAR O RETORNO AS RESPOSTAS E REQUISIÇÕES NO CLIENT
+
 var socket = io.connect('http://localhost:5000')
         socket.on('connect', function(){
             socket.emit('request', {
@@ -22,21 +25,25 @@ var socket = io.connect('http://localhost:5000')
         })
         socket.on('response_chart_update', function(message){
             message[0].forEach(element => {
-                if(chart.data.labels.length == 7) {
-                    chart.data.labels.pop();
-                } 
-                chart.data.labels.push(element);      
+                if (element != undefined) {
+                    if(chart.data.labels.length == 7) {
+                        chart.data.labels.pop();
+                    } 
+                    chart.data.labels.push(element); 
+                }     
             });
             message[1].forEach(element => {
                 chart.data.datasets.forEach((dataset) => {
-                    if(dataset.data.length == 7) {
-                        dataset.data.pop();
+                    if (element != undefined) {
+                        if(dataset.data.length == 7) {
+                            dataset.data.pop();
+                        } 
+                        dataset.data.push(element);
+                        document.querySelector('.price1').innerHTML = message[1][5];
+                        document.querySelector('.price2').innerHTML = message[1][6];
                     } 
-                    dataset.data.push(element); 
                 });
             });
-            document.querySelector('.price1').innerHTML = message[1][5];
-            document.querySelector('.price2').innerHTML = message[1][6];
             chart.update();
             socket.emit('request_chart_update', {
                 data: document.querySelector('.jumbotron-heading').innerHTML

@@ -1,11 +1,12 @@
 body {
-    background-color: #414141;
+    background-color: #777777;  
 }
 
+
 .card {
-    background-color: #414141;
+    background-color:#777777; 
 }
 
 h1, h2, h3, h4, th, td {
-    color:  #bebebe;
+    color:  #414141;
   }
