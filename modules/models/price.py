@@ -2,6 +2,17 @@ from modules.db.db import Base
 from sqlalchemy import Column, String, Integer, Numeric, ForeignKey, Date
 
 class Price(Base):
+    '''
+        Classe Price
+
+        - Classe mapeadora da tablea TPrice no banco de dados, utilizada
+        para persistir os dados referente aos preços/pontos das empresas
+        na bolsa de valores.
+
+        - A tabela faz relação com a tabela TCompany da classe Company
+        (fk_company_id), onde são persistidas as informações iniciais 
+        das empresas registradas.
+    '''
     __tablename__ = 'TPrice'
     price_id = Column(Integer, primary_key=True, autoincrement=True)
     fk_company_id = Column(Integer, ForeignKey('TCompany.company_id'))

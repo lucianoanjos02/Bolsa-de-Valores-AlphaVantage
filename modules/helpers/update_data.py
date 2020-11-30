@@ -10,6 +10,19 @@ company_dao = CompanyDAO(db_session)
 price_dao = PriceDAO(db_session)
 
 def table_data_update_request_handler():
+    '''
+    Função table_data_update_request_handler
+
+    - Essa função é utilizada para atualizar os dados das empresas no banco e atualizar
+    asincronamente e em tempo real os dados na tabela das empresas na view index.html,
+    à partir da função get_request_daily_full, que realiza a requisição na API da 
+    Alpha Vantage.
+
+    - A atualização ocorre a cada 60 segundos.
+
+    (Implementada na rota handle_update_table_event do socket na aplicação, para atualização
+    em tempo real.)
+    '''
     companies = []
     companies_data = company_dao.get_companies_data()
     for company in companies_data:
@@ -43,11 +56,31 @@ def table_data_update_request_handler():
 
 
 def chart_data_update_request_handler(company_symbol):
+    '''
+    Função chart_data_update_request_handler
+
+    - Essa função é utilizada para atualizar os dados da empresa selecionada no gráfico.
+
+    - A atualização ocorre a cada 60 segundos.
+
+    (Implementada na rota handle_update_chart_event do socket na aplicação, para atualização
+    em tempo real.)
+    '''
     time.sleep(60)
     chart_data = asyncio.run(get_chart_data(company_dao.get_company_symbol(company_symbol)))
     return chart_data
 
 
 def show_chart_data_request_handler(company_symbol):
+    '''
+    Função show_chart_data_request_handler
+
+    - Essa função é utilizada para buscar as gráficos da empresa que o usuário selecionar
+    a visualização do gráfico na view index.html.
+
+
+    (Implementada na rota handle_show_company_data_event do socket na aplicação, para atualização
+    em tempo real.)
+    '''
     chart_data = asyncio.run(get_chart_data(company_dao.get_company_symbol(company_symbol)))
     return chart_data
